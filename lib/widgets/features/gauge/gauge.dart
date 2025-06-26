@@ -1,115 +1,136 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
+import 'package:testv1/config/color.dart';
+import 'package:testv1/models/gauge_value_model.dart';
+class RadialGaugeDisplay extends StatelessWidget {
+  final GaugeValueModel gaugeData;
 
-void main() {
-  return runApp(GaugeApp());
-}
+  const RadialGaugeDisplay({
+    super.key,
+    required this.gaugeData,
+  });
 
-/// Represents the GaugeApp class
-class GaugeApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Radial Gauge Demo',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: MyHomePage(),
-    );
-  }
-}
-
-/// Represents MyHomePage class
-class MyHomePage extends StatefulWidget {
-  /// Creates the instance of MyHomePage
-  MyHomePage({Key? key}) : super(key: key);
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  Widget _getGauge({bool isRadialGauge = true}) {
-    if (isRadialGauge) {
-      return _getRadialGauge();
-    } else {
-      return _getLinearGauge();
-    }
-  }
-
-  Widget _getRadialGauge() {
-    return SfRadialGauge(
-      title: GaugeTitle(
-        text: 'Speedometer',
-        textStyle: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+    // ignore: unused_local_variable
+    final List<GaugeRange> gaugeRanges = <GaugeRange>[
+      GaugeRange(
+        startValue: -20,
+        endValue: 40,
+        color: Colors.green,
+        startWidth: 10,
+        endWidth: 10,
       ),
+      GaugeRange(
+        startValue: 40,
+        endValue: 80,
+        color: Colors.orange,
+        startWidth: 10,
+        endWidth: 10,
+      ),
+      GaugeRange(
+        startValue: 80,
+        endValue: 150,
+        color: Colors.red,
+        startWidth: 10,
+        endWidth: 10,
+      ),
+    ];
+    final List<GaugePointer> gaugePointers = <GaugePointer>[
+      NeedlePointer(
+        value: gaugeData.value,
+        needleColor: AppColors.blul,
+        needleLength: 0.85,
+        needleStartWidth: 1,
+        needleEndWidth: 1,
+        knobStyle: const KnobStyle(
+          color: Color.fromARGB(255, 255, 255, 255),
+          borderColor: AppColors.blul,
+          borderWidth: 0.02,
+          sizeUnit: GaugeSizeUnit.factor,
+        ),
+        tailStyle: const TailStyle(
+          length: 0.2,
+          width: 1,
+          color: AppColors.blul,
+          lengthUnit: GaugeSizeUnit.factor,
+        ),
+        enableAnimation: true,
+      ),
+      RangePointer(
+        value: gaugeData.value,
+        width: 0.10,
+        gradient: const SweepGradient(
+          colors: <Color>[Colors.green, Colors.orange, Colors.red],
+          stops: <double>[0.2, 0.5, 2.5],
+        ),
+        sizeUnit: GaugeSizeUnit.factor,
+        cornerStyle: CornerStyle.bothCurve,
+      ),
+    ];
+
+    final List<GaugeAnnotation> gaugeAnnotations = <GaugeAnnotation>[
+      GaugeAnnotation(
+        positionFactor: 0.7, 
+        widget: Text('${gaugeData.value.toStringAsFixed(1)}${gaugeData.unit}',
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+        angle: 90,
+      ),
+      GaugeAnnotation(
+        angle: 270,
+        positionFactor: 0.4, // Adjusted position
+        widget: Text(
+          gaugeData.title,
+          style: const TextStyle(fontSize: 18),
+        ),
+      ),
+    ];
+
+    return SfRadialGauge(
       axes: <RadialAxis>[
         RadialAxis(
-          minimum: 0,
+          annotations: gaugeAnnotations,
+          minimum: -20,
           maximum: 150,
-          ranges: <GaugeRange>[
-            GaugeRange(
-              startValue: 0,
-              endValue: 50,
-              color: Colors.green,
-              startWidth: 10,
-              endWidth: 10,
-            ),
-            GaugeRange(
-              startValue: 50,
-              endValue: 100,
-              color: Colors.orange,
-              startWidth: 10,
-              endWidth: 10,
-            ),
-            GaugeRange(
-              startValue: 100,
-              endValue: 150,
-              color: Colors.red,
-              startWidth: 10,
-              endWidth: 10,
-            ),
-          ],
-          pointers: <GaugePointer>[NeedlePointer(value: 90)],
-          annotations: <GaugeAnnotation>[
-            GaugeAnnotation(
-              widget: Container(
-                child: const Text(
-                  '90.0',
-                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                ),
-              ),
-              angle: 90,
-              positionFactor: 0.5,
-            ),
-          ],
+          radiusFactor: 0.7,
+          // The commented out ranges are now defined above and can be used here if desired.
+          // ranges: gaugeRanges,
+          axisLineStyle: const AxisLineStyle(
+            thickness: 0.1,
+            color: Color.fromARGB(158, 158, 158, 158),
+            thicknessUnit: GaugeSizeUnit.factor,
+          ),
+          showLabels: false,
+          showTicks: false,
+          pointers: gaugePointers,
         ),
       ],
     );
   }
+}
 
-  Widget _getLinearGauge() {
+// Reusable Linear Gauge Widget
+class LinearGaugeDisplay extends StatelessWidget {
+  const LinearGaugeDisplay({super.key});
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
+      width: 50,
+      margin: const EdgeInsets.all(5), 
       child: SfLinearGauge(
         minimum: 0.0,
         maximum: 100.0,
         orientation: LinearGaugeOrientation.horizontal,
-        majorTickStyle: LinearTickStyle(length: 20),
-        axisLabelStyle: TextStyle(fontSize: 12.0, color: Colors.black),
-        axisTrackStyle: LinearAxisTrackStyle(
+        majorTickStyle: const LinearTickStyle(length: 20), // Use const
+        axisLabelStyle: const TextStyle(fontSize: 12.0, color: Colors.black), // Use const
+        axisTrackStyle: const LinearAxisTrackStyle( // Use const
           color: Colors.cyan,
           edgeStyle: LinearEdgeStyle.bothFlat,
-          thickness: 15.0,
+          thickness: 30.0,
           borderColor: Colors.grey,
         ),
       ),
-      margin: EdgeInsets.all(10),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Syncfusion Flutter Gauge')),
-      body: _getGauge(),
     );
   }
 }

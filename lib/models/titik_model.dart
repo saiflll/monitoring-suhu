@@ -1,3 +1,4 @@
+// lib/models/titik_model.dart
 class Titik {
   final String id;
   final double x;

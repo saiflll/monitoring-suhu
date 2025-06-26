@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -30,12 +31,16 @@ class _DashboardShellState extends State<DashboardShell> {
   @override
   void didUpdateWidget(covariant DashboardShell oldWidget) {
     super.didUpdateWidget(oldWidget);
-    print('[DashboardShell] didUpdateWidget called.');
+    if (kDebugMode) {
+      print('[DashboardShell] didUpdateWidget called.');
+    }
     // Saat router menyediakan widget baru (karena rute berubah), bandingkan rute lama dan baru.
     // Menggunakan fullPath lebih robust jika name tidak selalu tersedia atau akurat di ShellRoute.
     final oldFullPath = oldWidget.routeState.fullPath;
     final newFullPath = widget.routeState.fullPath;
-    print('[DashboardShell] oldFullPath: $oldFullPath, newFullPath: $newFullPath');
+    if (kDebugMode) {
+      print('[DashboardShell] oldFullPath: $oldFullPath, newFullPath: $newFullPath');
+    }
 
     if (oldFullPath != newFullPath) {
       // Ekstrak nama rute dari fullPath.
@@ -49,7 +54,9 @@ class _DashboardShellState extends State<DashboardShell> {
   /// Method helper untuk mengirim event ke BLoC secara aman.
   void _dispatchRouteChanged(String? routeName) {
     final activeRouteName = routeName ?? AppRoutes.home;
-    print('[DashboardShell] Dispatching DashboardRouteChanged for: $activeRouteName');
+    if (kDebugMode) {
+      print('[DashboardShell] Dispatching DashboardRouteChanged for: $activeRouteName');
+    }
     // Menggunakan context.read aman di dalam lifecycle methods.
     context.read<DashboardBloc>().add(DashboardRouteChanged(activeRouteName));
   }
@@ -79,7 +86,9 @@ class _DashboardShellState extends State<DashboardShell> {
     return BlocBuilder<DashboardBloc, DashboardState>(
       builder: (context, state) {
         // State dari BLoC sekarang menjadi satu-satunya sumber kebenaran untuk judul.
-        print('[DashboardShell] Rebuilding with BLoC state headerTitle: ${state.headerTitle}');
+        if (kDebugMode) {
+          print('[DashboardShell] Rebuilding with BLoC state headerTitle: ${state.headerTitle}');
+        }
         final String headerTitle = state.headerTitle;
         final String activeRouteName = state.currentRouteName; // <-- AMBIL DARI STATE!
 

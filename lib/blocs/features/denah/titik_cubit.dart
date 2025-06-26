@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import '../../../config/data/models/titik_model.dart';
+import '../../../models/titik_model.dart'; // Updated import path
 
 part 'titik_state.dart';
 

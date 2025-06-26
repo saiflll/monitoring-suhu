@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 import '../../config/app_routes_constants.dart';
 
 part 'dashboard_event.dart';
@@ -20,13 +21,17 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
 
   /// Handler untuk event DashboardRouteChanged.
   void _onRouteChanged(DashboardRouteChanged event, Emitter<DashboardState> emit) {
-    print('[DashboardBloc] Received DashboardRouteChanged event for route: ${event.newRouteName}');
+    if (kDebugMode) {
+      print('[DashboardBloc] Received DashboardRouteChanged event for route: ${event.newRouteName}');
+    }
     final newTitle = _getTitleForRoute(event.newRouteName);
     emit(state.copyWith(
       currentRouteName: event.newRouteName,
       headerTitle: newTitle,
     ));
-    print('[DashboardBloc] Emitted new state with headerTitle: $newTitle');
+    if (kDebugMode) {
+      print('[DashboardBloc] Emitted new state with headerTitle: $newTitle');
+    }
   }
 
   void _onLogoutRequested(DashboardLogoutRequested event, Emitter<DashboardState> emit) {

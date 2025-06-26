@@ -9,7 +9,7 @@ class MapDetailSidebar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 400, // Sesuaikan dengan tinggi dari HomePage
+      height: 595, 
       decoration: BoxDecoration(
         color: AppColors.bgblu,
         border: Border.all(color: const Color.fromARGB(25, 0, 0, 0)),

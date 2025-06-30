@@ -139,6 +139,8 @@ class _InteractiveMapWidgetState extends State<InteractiveMapWidget> {
                           height: dotDiameter, 
                           child: GestureDetector(
                             onTap: () => context.read<TitikCubit>().pilihTitik(titik),
+                            // Mencegah event tap "tembus" ke GestureDetector di belakangnya
+                            behavior: HitTestBehavior.opaque,
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 300),
                               decoration: BoxDecoration(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'dart:math';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:testv1/models/titik_model.dart';
 import '../../../blocs/features/denah/titik_cubit.dart';
@@ -14,8 +15,10 @@ class InteractiveMapWidget extends StatefulWidget {
 
 class _InteractiveMapWidgetState extends State<InteractiveMapWidget> {
   final TransformationController _controller = TransformationController();
-  final double _mapWidth = 3010;
-  final double _mapHeight = 1777;
+  final double _mapWidth = 301;
+  final double _mapHeight = 177;
+  Matrix4? _initialMatrix;
+  static const double dotDiameter = 5.0; // Ukuran titik yang konsisten
 
   @override
   void dispose() {
@@ -36,8 +39,8 @@ class _InteractiveMapWidgetState extends State<InteractiveMapWidget> {
 
   void _zoomToTitik(Titik titik, Size viewportSize) {
     const double scale = 4.0;
-    final targetX = titik.x + (titik.width / 2);
-    final targetY = titik.y + (titik.height / 2);
+    final targetX = titik.x * _mapWidth; // Hitung posisi absolut dari relatif
+    final targetY = titik.y * _mapHeight; // Hitung posisi absolut dari relatif
 
     final x = -(targetX * scale) + (viewportSize.width / 2);
     final y = -(targetY * scale) + (viewportSize.height / 2);
@@ -49,7 +52,32 @@ class _InteractiveMapWidgetState extends State<InteractiveMapWidget> {
   }
 
   void _resetZoom() {
-    _controller.value = Matrix4.identity();
+    // Kembali ke tampilan awal yang sudah dihitung, bukan ke skala 1:1.
+    if (_initialMatrix != null) {
+      _controller.value = _initialMatrix!;
+    }
+  }
+
+  /// Menghitung dan mengatur matriks transformasi awal agar denah pas di layar.
+  void _setupInitialMatrix(Size viewportSize) {
+    // Hanya atur sekali saja untuk efisiensi.
+    if (_initialMatrix != null || viewportSize.isEmpty) return;
+
+    final scaleX = viewportSize.width / _mapWidth;
+    final scaleY = viewportSize.height / _mapHeight;
+    // Gunakan `min` untuk memastikan seluruh denah terlihat (seperti BoxFit.contain).
+    final scale = min(scaleX, scaleY);
+
+    // Hitung offset untuk memusatkan denah di dalam viewport.
+    final dx = (viewportSize.width - _mapWidth * scale) / 2;
+    final dy = (viewportSize.height - _mapHeight * scale) / 2;
+
+    _initialMatrix = Matrix4.identity()
+      ..translate(dx, dy)
+      ..scale(scale);
+
+    // Terapkan matriks awal ke controller.
+    _controller.value = _initialMatrix!;
   }
 
   @override
@@ -57,6 +85,8 @@ class _InteractiveMapWidgetState extends State<InteractiveMapWidget> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final viewportSize = constraints.biggest;
+        // Panggil fungsi setup setiap kali layout berubah (misal: rotasi layar).
+        _setupInitialMatrix(viewportSize);
 
         return BlocConsumer<TitikCubit, TitikState>(
           // Listener untuk memicu animasi zoom
@@ -68,7 +98,7 @@ class _InteractiveMapWidgetState extends State<InteractiveMapWidget> {
             }
           },
      
-          builder: (context, state) {
+      builder: (context, state) {
             final mapContent = InteractiveViewer(
               transformationController: _controller,
               minScale: 0.1,
@@ -98,13 +128,15 @@ class _InteractiveMapWidgetState extends State<InteractiveMapWidget> {
                    
                       ...titikList.map((titik) {
                         final isSelected = state.selected?.id == titik.id;
-                        final diameter = titik.width; 
+                        
+                        final left = (titik.x * _mapWidth) - (dotDiameter / 2);
+                        final top = (titik.y * _mapHeight) - (dotDiameter / 2);
 
                         return Positioned(
-                          left: titik.x,
-                          top: titik.y,
-                          width: diameter,
-                          height: diameter, 
+                          left: left,
+                          top: top,
+                          width: dotDiameter,
+                          height: dotDiameter, 
                           child: GestureDetector(
                             onTap: () => context.read<TitikCubit>().pilihTitik(titik),
                             child: AnimatedContainer(
@@ -113,7 +145,7 @@ class _InteractiveMapWidgetState extends State<InteractiveMapWidget> {
                                 shape: BoxShape.circle,
                                 color: _statusColor(titik.status),
                                 border: isSelected
-                                    ? Border.all(color: Colors.blueAccent, width: 10.0)
+                                    ? Border.all(color: Colors.blueAccent, width: 4.0) // Border lebih tipis
                                     : null,
                               ),
                             ),

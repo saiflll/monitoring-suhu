@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:testv1/blocs/features/home/home_data_bloc.dart';
 import '../common/app_containers.dart';
-import '../../models/titik_model.dart';
 import '../features/tables/data_table_widget.dart';
 
 class TableDetailSection extends StatelessWidget {
@@ -11,32 +10,24 @@ class TableDetailSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<HomeDataBloc, HomeDataState>(
-      buildWhen: (previous, current) =>
-          previous.tableData != current.tableData ||
-          previous.filterSelection != current.filterSelection,
+      buildWhen: (previous, current) => previous.tableData != current.tableData,
       builder: (context, state) {
-        if (state.tableData == null || state.filterSelection == null) {
+        if (state.tableData == null) {
           return const SizedBox(height: 40, child: Center(child: CircularProgressIndicator()));
         }
-        final areaItems = Titik.areaNames;
-        const deviceItems = ['Device 1', 'Device 2', 'Device 3', 'Device 4'];
-        const timeCountItems = ['1h', '2h', '3h'];
 
-        return Column(
-          children: [
-            const SizedBox(height: 4),
-            SectionContainer(
-              child: DataTableWidget(
-                height: 800, 
-                tableData: state.tableData!,
-                title: 'Table Detail',
-                filterSelection: state.filterSelection!,
-                areaItems: areaItems,
-                deviceItems: deviceItems,
-                timeCountItems: timeCountItems,
-              ),
+        return SectionContainer(
+          child: CardContainer(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Table Detail', style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 16),
+                DataTableWidget(height: 800, tableData: state.tableData!),
+              ],
             ),
-          ],
+          ),
         );
       },
     );

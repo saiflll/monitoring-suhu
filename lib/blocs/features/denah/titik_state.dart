@@ -15,7 +15,7 @@ class TitikState extends Equatable {
     Titik? selected,
   }) {
     return TitikState(
-      selected: selected ?? this.selected,
+      selected: selected,
     );
   }
 

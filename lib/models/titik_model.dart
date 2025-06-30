@@ -4,21 +4,17 @@ class Titik extends Equatable {
   final String id;
   final double x;
   final double y;
-  final double width;
-  final double height;
   final String status;
   final String deskripsi;
   const Titik({
     required this.id,
     required this.x,
     required this.y,
-    required this.width,
-    required this.height,
     required this.status,
     required this.deskripsi,
   });
   @override
-  List<Object?> get props => [id, x, y, width, height, status, deskripsi];
+  List<Object?> get props => [id, x, y, status, deskripsi];
 
   static List<String> get areaNames {
     try {
@@ -43,25 +39,24 @@ class Titik extends Equatable {
 
 
 final titikList = [
-  // Stage 0 Points
-  Titik(id: 's0_1', x: 260, y: 55, width: 15, height: 10, status: 'normal', deskripsi: 'Repacking Meat & Pawn'),
-  Titik(id: 's0_2', x: 247, y: 20, width: 10, height: 15, status: 'normal', deskripsi: 'Meat/pawn Storage'),
-  Titik(id: 's0_3', x: 247, y: 80, width: 10, height: 15, status: 'normal', deskripsi: 'Frozen Chili & Mushroom'),
-  Titik(id: 's0_4', x: 250, y: 107, width: 12, height: 12, status: 'normal', deskripsi: 'Ambient WH'),
-  Titik(id: 's0_5', x: 250, y: 130, width: 12, height: 12, status: 'normal', deskripsi: 'Packing Storage'),
-  Titik(id: 's0_6', x: 234, y: 115, width: 10, height: 10, status: 'normal', deskripsi: 'Corridor Room'),
-  Titik(id: 's0_7', x: 234, y: 50, width: 10, height: 10, status: 'normal', deskripsi: 'Intermediate Room'),
-  Titik(id: 's0_8', x: 217, y: 25, width: 10, height: 10, status: 'normal', deskripsi: 'Meat Processing'),
-  Titik(id: 's0_9', x: 217, y: 55, width: 10, height: 10, status: 'normal', deskripsi: 'Chilled Room'),
-  Titik(id: 's0_10', x: 217, y: 82, width: 10, height: 10, status: 'normal', deskripsi: 'Mentos Room'),
-  Titik(id: 's0_11', x: 220, y: 82, width: 10, height: 10, status: 'normal', deskripsi: 'Basic Mie Room'),
-  Titik(id: 's0_12', x: 220, y: 25, width: 10, height: 10, status: 'normal', deskripsi: 'Ribbon Room'),
-  Titik(id: 's0_13', x: 260, y: 59, width: 10, height: 10, status: 'normal', deskripsi: 'Wip Dough Store'),
-  Titik(id: 's0_14', x: 197, y: 156, width: 15, height: 15, status: 'normal', deskripsi: 'Wheat Flour Storage'),
-  Titik(id: 's0_16', x: 110, y: 78, width: 15, height: 15, status: 'normal', deskripsi: 'IGF'),
-  Titik(id: 's0_17', x: 88, y: 75, width: 15, height: 15, status: 'normal', deskripsi: 'Secondary Packing'),
-  Titik(id: 's0_18', x: 62, y: 122, width: 15, height: 15, status: 'normal', deskripsi: 'Ambient WH FG'),
-  Titik(id: 's0_19', x: 62, y: 55, width: 15, height: 15, status: 'normal', deskripsi: 'Frozen Storage FG'),
-  Titik(id: 's0_20', x: 73, y: 65, width: 10, height: 10, status: 'normal', deskripsi: 'Intermediate FSFG'),
-  Titik(id: 's0_21', x: 40, y: 50, width: 15, height: 15, status: 'normal', deskripsi: 'Loading Platform'),
+  Titik(id: 's0_1', x: 0.0863, y: 0.0309, status: 'normal', deskripsi: 'Repacking Meat & Pawn'),
+  Titik(id: 's0_2', x: 0.0820, y: 0.0112, status: 'normal', deskripsi: 'Meat/pawn Storage'),
+  Titik(id: 's0_3', x: 0.0820, y: 0.0450, status: 'normal', deskripsi: 'Frozen Chili & Mushroom'),
+  Titik(id: 's0_4', x: 0.0830, y: 0.0602, status: 'normal', deskripsi: 'Ambient WH'),
+  Titik(id: 's0_5', x: 0.0830, y: 0.0731, status: 'normal', deskripsi: 'Packing Storage'),
+  Titik(id: 's0_6', x: 0.0777, y: 0.0647, status: 'normal', deskripsi: 'Corridor Room'),
+  Titik(id: 's0_7', x: 0.0777, y: 0.0281, status: 'normal', deskripsi: 'Intermediate Room'),
+  Titik(id: 's0_8', x: 0.0720, y: 0.0140, status: 'normal', deskripsi: 'Meat Processing'),
+  Titik(id: 's0_9', x: 0.0720, y: 0.0309, status: 'normal', deskripsi: 'Chilled Room'),
+  Titik(id: 's0_10', x: 0.0720, y: 0.0461, status: 'normal', deskripsi: 'Mentos Room'),
+  Titik(id: 's0_11', x: 0.0730, y: 0.0461, status: 'normal', deskripsi: 'Basic Mie Room'),
+  Titik(id: 's0_12', x: 0.0730, y: 0.0140, status: 'normal', deskripsi: 'Ribbon Room'),
+  Titik(id: 's0_13', x: 0.0863, y: 0.0332, status: 'normal', deskripsi: 'Wip Dough Store'),
+  Titik(id: 's0_14', x: 0.0654, y: 0.0877, status: 'normal', deskripsi: 'Wheat Flour Storage'),
+  Titik(id: 's0_16', x: 0.0365, y: 0.0438, status: 'normal', deskripsi: 'IGF'),
+  Titik(id: 's0_17', x: 0.0292, y: 0.0422, status: 'normal', deskripsi: 'Secondary Packing'),
+  Titik(id: 's0_18', x: 0.0205, y: 0.0686, status: 'normal', deskripsi: 'Ambient WH FG'),
+  Titik(id: 's0_19', x: 0.0205, y: 0.0309, status: 'normal', deskripsi: 'Frozen Storage FG'),
+  Titik(id: 's0_20', x: 0.0242, y: 0.0365, status: 'normal', deskripsi: 'Intermediate FSFG'),
+  Titik(id: 's0_21', x: 0.0132, y: 0.0281, status: 'normal', deskripsi: 'Loading Platform'),
 ];

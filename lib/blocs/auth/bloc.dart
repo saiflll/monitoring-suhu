@@ -27,7 +27,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   Future<void> _onSubmitted(LoginSubmitted event, Emitter<LoginState> emit) async {
     if (state.email.isEmpty || state.password.isEmpty) {
       emit(state.copyWith(status: LoginStatus.failure, errorMessage: 'Email and password cannot be empty.'));
-      emit(state.copyWith(status: LoginStatus.initial, errorMessage: 'Email and password cannot be empty.'));
       return;
     }
 

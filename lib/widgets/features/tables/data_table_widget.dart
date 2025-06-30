@@ -4,27 +4,15 @@ import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:intl/intl.dart';
 import 'package:testv1/models/table_data_model.dart';
-import 'package:testv1/models/filter_selection_model.dart';
 import 'package:testv1/config/color.dart';
-import '../common/functional_filter_bar.dart';
 
 class DataTableWidget extends StatefulWidget {
   final TableDataModel tableData;
-  final String title;
-  final FilterSelection filterSelection;
-  final List<String> areaItems;
-  final List<String> deviceItems;
-  final List<String> timeCountItems;
   final double? height;
 
   const DataTableWidget({
     super.key,
     required this.tableData,
-    required this.title,
-    required this.filterSelection,
-    required this.areaItems,
-    required this.deviceItems,
-    required this.timeCountItems,
     this.height,
   });
 
@@ -65,18 +53,6 @@ class _DataTableWidgetState extends State<DataTableWidget> {
           ),
           child: Column(
             children: [
-              FunctionalFilterBar(
-                title: widget.title,
-                filterSelection: widget.filterSelection,
-                areaItems: widget.areaItems,
-                deviceItems: widget.deviceItems,
-                //disinii
-                timeCountItems: widget.timeCountItems,
-              ),
-              Container(
-                height: 2.0, 
-                color: AppColors.white,
-              ),
               Expanded(
                 child: SfDataGrid(
                   source: _dataSource,

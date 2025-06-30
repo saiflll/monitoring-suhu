@@ -8,13 +8,12 @@ import '../models/titik_model.dart';
 // ignore: unused_import
 import '../config/color.dart'; 
 import '../widgets/home_sections/mobile_home_layout.dart'; 
+import '../widgets/features/common/functional_filter_bar.dart';
 import '../widgets/features/denah/interactive_map_widget.dart';
 import '../widgets/features/denah/map_detail_sidebar.dart';
-import '../widgets/home_sections/room_info_section.dart';
 import '../widgets/home_sections/table_detail_section.dart';
-import '../widgets/home_sections/temp_graph_section.dart';
+import '../widgets/home_sections/chart_section.dart';
 import '../widgets/home_sections/gauge_alert_section.dart'; 
-import '../widgets/home_sections/rh_graph_section.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -41,8 +40,7 @@ class HomePage extends StatelessWidget {
                   final areaName =
                       Titik.getAreaNameFromId(titikState.selected!.id);
 
-                  if (areaName != null &&
-                      currentFilter != null &&
+                  if (areaName != null &&                      
                       areaName != currentFilter.selectedRoom) {
                     homeBloc.add(
                       HomeDataFilterChanged(
@@ -55,10 +53,10 @@ class HomePage extends StatelessWidget {
             ),
             BlocListener<HomeDataBloc, HomeDataState>(
               listenWhen: (previous, current) =>
-                  previous.filterSelection?.selectedRoom !=
-                  current.filterSelection?.selectedRoom,
+                  previous.filterSelection.selectedRoom !=
+                  current.filterSelection.selectedRoom,
               listener: (context, homeState) {
-                final selectedRoom = homeState.filterSelection?.selectedRoom;
+                final selectedRoom = homeState.filterSelection.selectedRoom;
                 final titikCubit = context.read<TitikCubit>();
 
                 if (selectedRoom != null) {
@@ -124,20 +122,35 @@ class _DesktopLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        RoomInfoSection(),
-        SizedBox(height: 8),
-        _MapSection(),
-        SizedBox(height: 8),
-        GaugeAlertSection(),
-        TempGraphSection(),
-        SizedBox(height: 8),
-        RHGraphSection(),
-        SizedBox(height: 8),
-        TableDetailSection(),
-      ],
+    return BlocBuilder<HomeDataBloc, HomeDataState>(
+      builder: (context, state) {
+        if (state.status == HomeDataStatus.initial || state.status == HomeDataStatus.loading && state.tempGaugeData == null) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            FunctionalFilterBar(
+              title: 'Dashboard',
+              filterSelection: state.filterSelection,
+              areaItems: state.areaItems,
+              deviceItems: state.deviceItems,
+              timeCountItems: state.timeCountItems,
+            ),
+            const SizedBox(height: 8),
+            const _MapSection(),
+            const SizedBox(height: 8),
+            const GaugeAlertSection(),
+            const SizedBox(height: 8),
+            ChartSection(chartDataSelector: (state) => state.tempChartData),
+            const SizedBox(height: 8),
+            ChartSection(chartDataSelector: (state) => state.humidityChartData),
+            const SizedBox(height: 8),
+            const TableDetailSection(),
+          ],
+        );
+      },
     );
   }
 }

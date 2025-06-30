@@ -1,33 +1,44 @@
+
+
+
 part of 'home_data_bloc.dart';
+
 
 enum HomeDataStatus { initial, loading, success, failure }
 
 class HomeDataState extends Equatable {
   const HomeDataState({
     this.status = HomeDataStatus.initial,
-    this.filterSelection,
+    required this.filterSelection,
     this.tempGaugeData,
     this.humidityGaugeData,
     this.tempChartData,
     this.humidityChartData,
     this.tableData,
+    this.areaItems = const [],
+    this.deviceItems = const [],
+    this.timeCountItems = const [],
     this.errorMessage = '',
   });
 
   final HomeDataStatus status;
-  final FilterSelection? filterSelection;
+  final FilterSelection filterSelection;
   final GaugeValueModel? tempGaugeData;
   final GaugeValueModel? humidityGaugeData;
   final ChartDataModel? tempChartData;
   final ChartDataModel? humidityChartData;
   final TableDataModel? tableData;
+  final List<String> areaItems;
+  final List<String> deviceItems;
+  final List<String> timeCountItems;
   final String errorMessage;
 
   factory HomeDataState.initial() {
+    final areaNames = Titik.areaNames;
     final initialFilter = FilterSelection(
-      selectedRoom: Titik.areaNames.first, // Gunakan nilai pertama yang valid
-      selectedSensor: 'Device 1',
-      selectedCount: '1h',
+      selectedRoom: areaNames.isNotEmpty ? areaNames.first : '',
+      selectedSensor: FilterConstants.deviceItems.first,
+      selectedCount: FilterConstants.timeCountItems.first,
       selectedDateRange: DateTimeRange(
         start: DateTime.now(),
         end: DateTime.now(),
@@ -36,6 +47,9 @@ class HomeDataState extends Equatable {
     return HomeDataState(
       status: HomeDataStatus.initial,
       filterSelection: initialFilter,
+      areaItems: areaNames,
+      deviceItems: FilterConstants.deviceItems,
+      timeCountItems: FilterConstants.timeCountItems,
     );
   }
 
@@ -47,6 +61,9 @@ class HomeDataState extends Equatable {
     ChartDataModel? tempChartData,
     ChartDataModel? humidityChartData,
     TableDataModel? tableData,
+    List<String>? areaItems,
+    List<String>? deviceItems,
+    List<String>? timeCountItems,
     String? errorMessage,
   }) {
     return HomeDataState(
@@ -57,6 +74,9 @@ class HomeDataState extends Equatable {
       tempChartData: tempChartData ?? this.tempChartData,
       humidityChartData: humidityChartData ?? this.humidityChartData,
       tableData: tableData ?? this.tableData,
+      areaItems: areaItems ?? this.areaItems,
+      deviceItems: deviceItems ?? this.deviceItems,
+      timeCountItems: timeCountItems ?? this.timeCountItems,
       errorMessage: errorMessage ?? this.errorMessage,
     );
   }
@@ -70,6 +90,9 @@ class HomeDataState extends Equatable {
         tempChartData,
         humidityChartData,
         tableData,
+        areaItems,
+        deviceItems,
+        timeCountItems,
         errorMessage,
       ];
 }

@@ -34,7 +34,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     emit(state.copyWith(status: LoginStatus.loading));
     try {
       await Future.delayed(const Duration(seconds: 1)); 
-      if (state.email == "test" && state.password == "password") { // user debug
+      if (state.email == "su" && state.password == "su") { 
         emit(state.copyWith(status: LoginStatus.success));
       } else {
         emit(state.copyWith(status: LoginStatus.failure, errorMessage: 'Invalid credentials.'));

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-// ignore: unused_import
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../config/color.dart';
+import '../../blocs/features/home/home_data_bloc.dart';
+import '../../models/titik_model.dart';
 import '../common/app_containers.dart';
-import '../features/denah/interactive_map_widget.dart';
-import '../features/denah/map_detail_sidebar.dart';
+import '../common/custom_dropdown.dart';
 
 class RoomInfoSection extends StatelessWidget {
   const RoomInfoSection({super.key});
@@ -27,64 +27,46 @@ class RoomInfoSection extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // Title and subtitle
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
-                        'Informasi Ruangan',
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      Text(
-                        'Denah Ruangan',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black54,
-                        ),
-                      ),
-                    ],
+                const Expanded(
+                  child: Text(
+                    'Informasi Ruangan',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
                   ),
                 ),
                 // Dropdown
-                DropdownButton<String>(
-                  value: 'Ruangan 1',
-                  items: <String>['Ruangan 1', 'Ruangan 2', 'Ruangan 3']
-                      .map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
+                BlocBuilder<HomeDataBloc, HomeDataState>(
+                  buildWhen: (previous, current) =>
+                      previous.filterSelection?.selectedRoom != current.filterSelection?.selectedRoom,
+                  builder: (context, state) {
+                    if (state.filterSelection == null) {
+                      return const SizedBox.shrink(); // or a loading indicator
+                    }
+                    final areaItems = Titik.areaNames;
+                    return CustomDropdown(
+                      height: 40,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      borderRadius: BorderRadius.circular(15),
+                      value: state.filterSelection!.selectedRoom,
+                      items: areaItems,
+                      onChanged: (newValue) {
+                        if (newValue != null) {
+                          context.read<HomeDataBloc>().add(
+                                HomeDataFilterChanged(state.filterSelection!.copyWith(selectedRoom: newValue)),
+                              );
+                        }
+                      },
                     );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    // TODO: Implement logic for dropdown selection
                   },
                 ),
               ],
             ),
-          ),
-          const SizedBox(height: 12),
-          // Kontainer bawah untuk denah dan detail
-          Row(
-            children: [
-              Expanded(
-                flex: 4,
-                child: Container(
-                  padding: const EdgeInsets.only(right: 8),
-                  color: AppColors.bgblu,
-                  child: const InteractiveMapWidget(isRotated: false),
-                ),
-              ),
-              const SizedBox(width: 8),
-              const Expanded(flex: 2, child: MapDetailSidebar()),
-            ],
           ),
         ],
       ),

@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:testv1/blocs/auth/bloc.dart';
 import 'package:testv1/widgets/layouts/responsive_layout.dart';
-import '../config/app_routes_constants.dart'; // Import AppRoutes
+import '../config/app_routes_constants.dart'; 
 import '../config/color.dart'; 
 
 class LoginScreen extends StatelessWidget {
@@ -29,8 +29,7 @@ class LoginScreen extends StatelessWidget {
   // Desktop
   Widget _buildDesktopLayout(BuildContext context) {
     return Stack(
-      children: [
-        
+      children: [  
         Positioned.fill(
           child: Image.asset(
             'assets/bg_login.png',
@@ -42,8 +41,8 @@ class LoginScreen extends StatelessWidget {
           top: 32,
           left: 32,
           child: SizedBox(
-            width: 150,
-            height: 150,
+            width: 100,
+            height: 100,
             child: Image.asset(
               'assets/logo.png', 
               fit: BoxFit.contain,
@@ -55,10 +54,11 @@ class LoginScreen extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              
               Expanded(
                 child: Center(
                   child: Padding(
-                    padding: const EdgeInsets.all(48.0),
+                    padding: const EdgeInsets.all(4.0),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(24),
                       child: BackdropFilter(
@@ -66,6 +66,7 @@ class LoginScreen extends StatelessWidget {
                         child: Container(
                           constraints: const BoxConstraints(maxWidth: 400, maxHeight: 600),
                           decoration: BoxDecoration(
+                         
                             // ignore: deprecated_member_use
                             color: Colors.white.withOpacity(0.50),
                             borderRadius: BorderRadius.circular(25),
@@ -75,7 +76,7 @@ class LoginScreen extends StatelessWidget {
                               width: 1.5,
                             ),
                           ),
-                          padding: const EdgeInsets.all(32),
+                          padding: const EdgeInsets.all(1),
                           child: const _LoginForm(),
                         ),
                       ),
@@ -87,7 +88,7 @@ class LoginScreen extends StatelessWidget {
               const Expanded(
                 child: Center(
                   child: Padding(
-                    padding: EdgeInsets.all(32.0),
+                    padding: EdgeInsets.all(2.0),
                     child: _Illustration(),
                   ),
                 ),
@@ -141,7 +142,7 @@ class _Illustration extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
-      constraints: const BoxConstraints(maxHeight: 250), 
+      constraints: const BoxConstraints(maxHeight: 550), 
       child: Image.asset(
         'assets/bg_awal.png', 
         fit: BoxFit.contain,
@@ -301,7 +302,7 @@ class _LoginForm extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 2),
           BlocBuilder<LoginBloc, LoginState>(
             buildWhen: (previous, current) => previous.status != current.status,
             builder: (context, state) {

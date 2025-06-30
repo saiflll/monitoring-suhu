@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:testv1/config/color.dart';
 
 import '../navigation/sidebar.dart'; 
 import '../navigation/header.dart'; 
@@ -123,6 +124,7 @@ class _DashboardShellState extends State<DashboardShell> {
         if (!isMobile) const SizedBox(height: 4), 
         Expanded(
           child: Container(
+            color: AppColors.white,
             padding: const EdgeInsets.all(8.0),
             child: SingleChildScrollView( 
               child: currentView, 

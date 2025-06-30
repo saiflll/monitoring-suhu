@@ -25,9 +25,7 @@ class ProfileMenuButton extends StatelessWidget {
         backgroundColor: const Color.fromARGB(0, 255, 255, 255),
         foregroundColor: AppColors.pri, // Icon color
         radius: 22,
-        //backgroundImage: AssetImage('assets/Profil.png'), 
-        //backgroundColor: AppColors.pri,      
-        child: Icon(Icons.account_circle_outlined),
+        child: Icon(Icons.account_circle,size: 35, ),
       ),
       tooltip: 'Profil Pengguna',
       offset: const Offset(0, 40), 

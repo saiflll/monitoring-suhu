@@ -1,20 +1,26 @@
 part of 'titik_cubit.dart';
 
 class TitikState extends Equatable {
+  // Titik yang sedang dipilih
   final Titik? selected;
-  final int stage;
 
-  const TitikState({this.selected, this.stage = 0});
+  const TitikState({
+    this.selected,
+  });
 
-  factory TitikState.initial() => const TitikState(selected: null, stage: 0);
+  // State awal, membuat instance baru dari TransformationController
+  factory TitikState.initial() => const TitikState();
 
-  TitikState copyWith({Titik? selected, int? stage}) {
+  TitikState copyWith({
+    Titik? selected,
+  }) {
     return TitikState(
       selected: selected ?? this.selected,
-      stage: stage ?? this.stage,
     );
   }
 
   @override
-  List<Object?> get props => [selected, stage];
+  List<Object?> get props => [
+        selected,
+      ];
 }

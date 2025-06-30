@@ -93,8 +93,7 @@ class RadialGaugeDisplay extends StatelessWidget {
           minimum: -20,
           maximum: 150,
           radiusFactor: 0.7,
-          // The commented out ranges are now defined above and can be used here if desired.
-          // ranges: gaugeRanges,
+      
           axisLineStyle: const AxisLineStyle(
             thickness: 0.1,
             color: Color.fromARGB(158, 158, 158, 158),
@@ -108,8 +107,6 @@ class RadialGaugeDisplay extends StatelessWidget {
     );
   }
 }
-
-// Reusable Linear Gauge Widget
 class LinearGaugeDisplay extends StatelessWidget {
   const LinearGaugeDisplay({super.key});
 
@@ -122,9 +119,9 @@ class LinearGaugeDisplay extends StatelessWidget {
         minimum: 0.0,
         maximum: 100.0,
         orientation: LinearGaugeOrientation.horizontal,
-        majorTickStyle: const LinearTickStyle(length: 20), // Use const
-        axisLabelStyle: const TextStyle(fontSize: 12.0, color: Colors.black), // Use const
-        axisTrackStyle: const LinearAxisTrackStyle( // Use const
+        majorTickStyle: const LinearTickStyle(length: 20), 
+        axisLabelStyle: const TextStyle(fontSize: 12.0, color: Colors.black), 
+        axisTrackStyle: const LinearAxisTrackStyle( 
           color: Colors.cyan,
           edgeStyle: LinearEdgeStyle.bothFlat,
           thickness: 30.0,

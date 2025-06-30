@@ -27,7 +27,7 @@ class NotificationMenuButton extends StatelessWidget {
   Widget build(BuildContext context) {
     if (asPopup) {
       return PopupMenuButton<String>(
-        icon: const Icon(Icons.notifications_none_outlined, color: AppColors.pri), 
+        icon: const Icon(Icons.notifications_none, color: AppColors.pri, size: 35,), 
         tooltip: 'Notifikasi', 
         offset: const Offset(0, 40), 
         itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[

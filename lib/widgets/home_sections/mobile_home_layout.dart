@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:testv1/config/color.dart';
 import 'package:testv1/widgets/common/app_containers.dart';
 import 'package:testv1/widgets/features/denah/interactive_map_widget.dart';
 import 'package:testv1/widgets/features/denah/map_detail_sidebar.dart';
@@ -15,14 +14,13 @@ class MobileHomeLayout extends StatelessWidget {
       padding: const EdgeInsets.all(8),
       child: Column(
         children: [
-          // Untuk mobile, denah diputar dan diberi tinggi tetap.
-          Container(
-            color: AppColors.bgblu,
-            padding: const EdgeInsets.all(8),
-            child: const SizedBox(
-              height: 800,
-              child: InteractiveMapWidget(isRotated: true),
-            ),
+          // Menggunakan AspectRatio untuk menjaga proporsi denah saat diputar
+          // dan untuk mengatasi eror layout pada mobile.
+          AspectRatio(
+            // Rasio aspek dibalik karena denah diputar 90 derajat (potret)
+            // 1777 (tinggi asli) / 3010 (lebar asli)
+            aspectRatio: 1777 / 3010,
+            child: const InteractiveMapWidget(isRotated: true), // Mobile = potret
           ),
           const SizedBox(height: 8),
           const MapDetailSidebar(), // Menggunakan widget detail
@@ -31,7 +29,14 @@ class MobileHomeLayout extends StatelessWidget {
           SizedBox(
             height: 500,
             child: RadialGaugeDisplay(
-              gaugeData: const GaugeValueModel(value: 75.5, title: 'Temperature', unit: '°C'),
+              gaugeData: const GaugeValueModel(
+                value: 75.5,
+                title: 'Temperature',
+                unit: '°C',
+                low: 0,
+                high: 100, 
+                last: 75.5, 
+              ),
             ),
           ),
           const SizedBox(height: 8),
@@ -39,7 +44,10 @@ class MobileHomeLayout extends StatelessWidget {
           SizedBox(
             height: 500,
             child: RadialGaugeDisplay(
-              gaugeData: const GaugeValueModel(value: 42.0, title: 'Humidity', unit: '%'),
+              gaugeData: const GaugeValueModel(
+                value: 42.0, title: 'Humidity', unit: '%',
+                low: 0, high: 100, last: 42.0, // Added required arguments
+              ),
             ),
           ),
         ],

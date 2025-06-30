@@ -1,29 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:testv1/blocs/features/home/home_data_bloc.dart';
 import '../common/app_containers.dart';
-import '../features/tables/data_table_widget.dart'; // Import the new table widget
-import '../../models/table_data_model.dart'; // Import the table data model
+import '../../models/titik_model.dart';
+import '../features/tables/data_table_widget.dart';
 
 class TableDetailSection extends StatelessWidget {
   const TableDetailSection({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Contoh data untuk tabel (akan diganti dengan data dari backend)
-    final TableDataModel tableData = TableDataModel(
-      headers: ['ID', 'Event', 'Timestamp', 'Status'],
-      rows: const [
-        TableRowData(id: 'EV001', event: 'Sensor A Anomaly', timestamp: '2023-10-26 10:00:00', status: 'Warning'),
-        TableRowData(id: 'EV002', event: 'Door Opened', timestamp: '2023-10-26 09:30:00', status: 'Normal'),
-        TableRowData(id: 'EV003', event: 'Temperature Spike', timestamp: '2023-10-26 08:45:00', status: 'Critical'),
-      ],
-    );
+    return BlocBuilder<HomeDataBloc, HomeDataState>(
+      buildWhen: (previous, current) =>
+          previous.tableData != current.tableData ||
+          previous.filterSelection != current.filterSelection,
+      builder: (context, state) {
+        if (state.tableData == null || state.filterSelection == null) {
+          return const SizedBox(height: 40, child: Center(child: CircularProgressIndicator()));
+        }
+        final areaItems = Titik.areaNames;
+        const deviceItems = ['Device 1', 'Device 2', 'Device 3', 'Device 4'];
+        const timeCountItems = ['1h', '2h', '3h'];
 
-    return SectionContainer(
-      child: Column(
-        children: [
-          SizedBox(height: 400, child: DataTableWidget(tableData: tableData)),
-        ],
-      ),
+        return Column(
+          children: [
+            const SizedBox(height: 4),
+            SectionContainer(
+              child: DataTableWidget(
+                height: 800, 
+                tableData: state.tableData!,
+                title: 'Table Detail',
+                filterSelection: state.filterSelection!,
+                areaItems: areaItems,
+                deviceItems: deviceItems,
+                timeCountItems: timeCountItems,
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

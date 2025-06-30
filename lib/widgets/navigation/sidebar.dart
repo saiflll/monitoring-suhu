@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import '../../config/color.dart'; // Import file warna global Anda
-import '../../config/app_routes_constants.dart'; // Import AppRoutes
+import '../../config/color.dart';
+import '../../config/app_routes_constants.dart'; 
 
 class AppSidebar extends StatelessWidget {
   final String activeRoute;
-  final Function(String) onNavigate; // Expects a GoRouter route NAME or action string
+  final Function(String) onNavigate;
 
   const AppSidebar({
     super.key,
@@ -12,7 +12,7 @@ class AppSidebar extends StatelessWidget {
     required this.onNavigate,
   });
 
-  // Helper map for Master Data routes
+
   static final Map<String, String> masterDataRoutesMap = {
     '〇 Data Area': AppRoutes.masterDataArea,
     '〇 Data Department': AppRoutes.masterDataDepartment,
@@ -24,9 +24,18 @@ class AppSidebar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 320, // Lebar tetap untuk sidebar
-      height: double.infinity, // Fill available height
-      color: AppColors.white,
+      width: 320, 
+      height: double.infinity, 
+      
+      decoration: const BoxDecoration(
+        color: AppColors.white,
+        border: Border(
+          right: BorderSide(
+            color: Color.fromARGB(193, 233, 245, 254), 
+            width: 6,
+          ),
+        ),
+      ),
       padding: const EdgeInsets.symmetric(vertical: 24.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -38,18 +47,18 @@ class AppSidebar extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: SizedBox(
-                width: 108,
-                height: 70,
+                width: 80,
+                height: 50,
                 child: Image.asset(
-                    'assets/logo.png'), // Pastikan path asset benar dan ada di pubspec.yaml
+                    'assets/logo.png'),
                 ),
             ),
           ),
           const SizedBox(height: 25),
           _buildSidebarMenuItem(
             icon: Icons.home_filled,
-            text: 'Dashboard', // Langsung gunakan judul yang benar
-            routeName: AppRoutes.home, // Nama rute untuk navigasi
+            text: 'Dashboard',
+            routeName: AppRoutes.home, 
             isActive: activeRoute == AppRoutes.home,
             onNavigate: onNavigate,
           ),
@@ -59,6 +68,7 @@ class AppSidebar extends StatelessWidget {
             childrenDisplayTexts: masterDataRoutesMap.keys.toList(),
             activeRoute: activeRoute,
             onNavigate: onNavigate,
+            context: context, 
           ),
           const Spacer(),
           _buildSidebarMenuItem(
@@ -108,7 +118,7 @@ class AppSidebar extends StatelessWidget {
     required String routeName,
     bool isActive = false,
     required Function(String) onNavigate,
-    // bool showText = true, // Teks selalu ditampilkan, jadi parameter ini bisa dihilangkan jika tidak ada logika lain
+   
   }) {
     final Color iconColor = isActive ? AppColors.subpri : AppColors.gra;
     final Color textColor = isActive ? AppColors.subpri : AppColors.gra;
@@ -138,12 +148,12 @@ class AppSidebar extends StatelessWidget {
     required List<String> childrenDisplayTexts,
     String? activeRoute,
     required Function(String) onNavigate,
-    // bool showText = true, // Teks selalu ditampilkan
+    required BuildContext context, 
   }) {
-    // Determine if any child of this expansion tile is the active route
+
     final bool isParentActive = masterDataRoutesMap.values.any((route) => activeRoute == route);
     
-    // Determine colors for the header based on whether a child is active
+
     final Color headerItemColor = isParentActive ? AppColors.subpri : AppColors.gra;
     final Color headerBackgroundColor = isParentActive ? Colors.transparent : Colors.transparent;
 
@@ -153,38 +163,40 @@ class AppSidebar extends StatelessWidget {
         color: headerBackgroundColor,
         borderRadius: BorderRadius.circular(1.0),
       ),
-      child: ExpansionTile(
-        // Keep the tile expanded if one of its children is active
-        initiallyExpanded: isParentActive,
-        leading: Icon(icon, color: headerItemColor), // Warna ikon header
-        title: Text(text,
-            style: TextStyle(color: headerItemColor, fontWeight: FontWeight.w600)), // Warna teks header
-        iconColor: headerItemColor, // Warna panah saat expanded
-        collapsedIconColor: headerItemColor, // Warna panah saat collapsed
-        children: childrenDisplayTexts.map((displayText) {
-          final routeName = masterDataRoutesMap[displayText];
-          final bool isChildActive = activeRoute == routeName;
 
-          return ListTile(
-            title: Padding(
-              padding: const EdgeInsets.only(left: 25.0),
-              child: Text(
-                displayText, // Hapus style dari sini agar ListTile bisa mengontrol warna teks
-              ), 
-            ),
-            // Style untuk sub-item, bisa disesuaikan jika perlu dibedakan saat aktif
-            selected: isChildActive,
-            selectedTileColor: AppColors.bgblu, // Latar belakang untuk sub-item yang terpilih
-            selectedColor: AppColors.subpri,    // Warna teks untuk sub-item yang terpilih
-            textColor: AppColors.gra,           // Warna teks default untuk sub-item
-            dense: true,
-            onTap: () {
-              if (routeName != null) {
-                onNavigate(routeName);
-              }
-            },
-          );
-        }).toList(),
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          initiallyExpanded: isParentActive,
+          leading: Icon(icon, color: headerItemColor),
+          title: Text(text,
+              style: TextStyle(color: headerItemColor, fontWeight: FontWeight.w600)),
+          iconColor: headerItemColor,
+          collapsedIconColor: headerItemColor,
+          children: childrenDisplayTexts.map((displayText) {
+            final routeName = masterDataRoutesMap[displayText];
+            final bool isChildActive = activeRoute == routeName;
+
+            return ListTile(
+              title: Padding(
+                padding: const EdgeInsets.only(left: 25.0),
+                child: Text(
+                  displayText,
+                ),
+              ),
+              selected: isChildActive,
+              selectedTileColor: AppColors.bgblu,
+              selectedColor: AppColors.subpri,
+              textColor: AppColors.gra,
+              dense: true,
+              onTap: () {
+                if (routeName != null) {
+                  onNavigate(routeName);
+                }
+              },
+            );
+          }).toList(),
+        ),
       ),
     );
   }
@@ -200,13 +212,13 @@ class MobileNav extends StatelessWidget {
     required this.onNavigate,
   });
 
-  // Helper method to get route name from index
+
   String _getRouteFromIndex(int index) {
     switch (index) {
       case 0:
         return AppRoutes.home;
       case 1:
-        // Navigate to the master data selection page
+
         return AppRoutes.masterData;
       case 2:
         return AppRoutes.notifications;
@@ -221,7 +233,7 @@ class MobileNav extends StatelessWidget {
 
   int _getIndexFromRoute(String routeName) {
     if (routeName == AppRoutes.home) return 0;
-    if (routeName == AppRoutes.masterData || // Add the parent route
+    if (routeName == AppRoutes.masterData ||
         routeName == AppRoutes.masterDataArea ||
         routeName == AppRoutes.masterDataDepartment ||
         routeName == AppRoutes.masterDataPlant ||
@@ -232,7 +244,7 @@ class MobileNav extends StatelessWidget {
     if (routeName == AppRoutes.notifications) return 2;
     if (routeName == AppRoutes.settings) return 3;
     if (routeName == AppRoutes.profile) return 4;
-    return 0; // Default to Home
+    return 0;
   }
 
   @override
@@ -252,7 +264,7 @@ class MobileNav extends StatelessWidget {
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(
           icon: Icon(Icons.home),
-          label: 'Dashboard', // Langsung gunakan judul yang benar
+          label: 'Dashboard', 
         ),
          BottomNavigationBarItem(
           icon: Icon(Icons.storage),

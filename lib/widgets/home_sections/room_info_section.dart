@@ -43,22 +43,19 @@ class RoomInfoSection extends StatelessWidget {
                 // Dropdown
                 BlocBuilder<HomeDataBloc, HomeDataState>(
                   buildWhen: (previous, current) =>
-                      previous.filterSelection?.selectedRoom != current.filterSelection?.selectedRoom,
+                      previous.filterSelection.selectedRoom != current.filterSelection.selectedRoom,
                   builder: (context, state) {
-                    if (state.filterSelection == null) {
-                      return const SizedBox.shrink(); // or a loading indicator
-                    }
                     final areaItems = Titik.areaNames;
                     return CustomDropdown(
                       height: 40,
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       borderRadius: BorderRadius.circular(15),
-                      value: state.filterSelection!.selectedRoom,
+                      value: state.filterSelection.selectedRoom,
                       items: areaItems,
                       onChanged: (newValue) {
                         if (newValue != null) {
                           context.read<HomeDataBloc>().add(
-                                HomeDataFilterChanged(state.filterSelection!.copyWith(selectedRoom: newValue)),
+                                HomeDataFilterChanged(state.filterSelection.copyWith(selectedRoom: newValue)),
                               );
                         }
                       },

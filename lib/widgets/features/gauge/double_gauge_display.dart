@@ -45,50 +45,69 @@ class DoubleGaugeDisplay extends StatelessWidget {
   }
   
   Widget _buildStatisticRow(String label, String value, {bool isBold = false}) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 50),
-      child: Row(
-        children: [
-          // Label
-          Expanded(
-            flex: 1,
-            child: Container(
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: AppColors.bgblu,
-                border: Border.all(color: AppColors.bgblu, width: 4),
-              ),
-              child: Text(
-                label,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-                  color: AppColors.black,
-                ),
-              ),
-            ),
+    return LayoutBuilder(builder: (context, constraints) {
+      // Tentukan breakpoint untuk beralih antara layout desktop dan mobile.
+      const double breakpoint = 350.0;
+
+      final labelWidget = Container(
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: AppColors.bgblu,
+          border: Border.all(color: AppColors.bgblu, width: 4),
+        ),
+        child: Text(
+          label,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+            color: AppColors.black,
           ),
-          //  Nilai
-          Expanded(
-            flex: 1,
-            child: Container(
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: AppColors.bgblu, width: 4),
-              ),
-              child: Text(value,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-                      color: AppColors.black)),
-            ),
+        ),
+      );
+
+      final valueWidget = Container(
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: AppColors.bgblu, width: 4),
+        ),
+        child: Text(value,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 13,
+                fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+                color: AppColors.black)),
+      );
+
+      // Jika lebar yang tersedia kurang dari breakpoint, gunakan layout mobile (Column).
+      if (constraints.maxWidth < breakpoint) {
+        return Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              labelWidget,
+              valueWidget,
+            ],
           ),
-        ],
-      ),
-    );
+        );
+      } else {
+        // Jika tidak, gunakan layout desktop (Row).
+        return Container(
+          margin: const EdgeInsets.symmetric(horizontal: 50),
+          child: Row(
+            children: [
+              Expanded(
+                flex: 1,
+                child: labelWidget,
+              ),
+              Expanded(flex: 1, child: valueWidget),
+            ],
+          ),
+        );
+      }
+    });
   }
 
   @override

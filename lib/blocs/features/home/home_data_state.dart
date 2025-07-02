@@ -35,9 +35,11 @@ class HomeDataState extends Equatable {
 
   factory HomeDataState.initial() {
     final areaNames = Titik.areaNames;
+    final initialRoom = areaNames.isNotEmpty ? areaNames.first : '';
+    final deviceItems = Titik.getDeviceItemsForArea(initialRoom);
     final initialFilter = FilterSelection(
-      selectedRoom: areaNames.isNotEmpty ? areaNames.first : '',
-      selectedSensor: FilterConstants.deviceItems.first,
+      selectedRoom: initialRoom,
+      selectedSensor: deviceItems.isNotEmpty ? deviceItems.first : '',
       selectedCount: FilterConstants.timeCountItems.first,
       selectedDateRange: DateTimeRange(
         start: DateTime.now(),
@@ -48,7 +50,7 @@ class HomeDataState extends Equatable {
       status: HomeDataStatus.initial,
       filterSelection: initialFilter,
       areaItems: areaNames,
-      deviceItems: FilterConstants.deviceItems,
+      deviceItems: deviceItems,
       timeCountItems: FilterConstants.timeCountItems,
     );
   }

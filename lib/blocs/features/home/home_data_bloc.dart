@@ -46,11 +46,36 @@ class HomeDataBloc extends Bloc<HomeDataEvent, HomeDataState> {
     HomeDataFilterChanged event,
     Emitter<HomeDataState> emit,
   ) async {
-    emit(state.copyWith(status: HomeDataStatus.loading, filterSelection: event.newFilter));
+    var newFilter = event.newFilter;
+    List<String> newDeviceItems = state.deviceItems;
+
+    // Cek apakah ruangan berubah.
+    if (newFilter.selectedRoom != state.filterSelection.selectedRoom) {
+      // Jika ya, perbarui daftar device yang tersedia untuk ruangan baru.
+      newDeviceItems = Titik.getDeviceItemsForArea(newFilter.selectedRoom);
+      
+      // Cek apakah sensor yang datang dari event valid untuk area baru.
+      // Ini penting agar klik dari peta (yang mengirim area & sensor) tidak di-reset.
+      final isSensorValidForNewRoom = newDeviceItems.contains(newFilter.selectedSensor);
+
+      // Jika sensor TIDAK valid (misalnya, saat user ganti area via dropdown),
+      // reset sensor ke item pertama dari daftar device yang baru.
+      if (!isSensorValidForNewRoom) {
+        final newSelectedSensor = newDeviceItems.isNotEmpty ? newDeviceItems.first : '';
+        newFilter = newFilter.copyWith(selectedSensor: newSelectedSensor);
+      }
+    }
+
+    emit(state.copyWith(
+      status: HomeDataStatus.loading,
+      filterSelection: newFilter,
+      deviceItems: newDeviceItems, // Kirim daftar device yang sudah diperbarui
+    ));
+
     try {
       // Simulate network delay for fetching new data
       await Future.delayed(const Duration(milliseconds: 300));
-      final data = _generateDummyData(event.newFilter);
+      final data = _generateDummyData(newFilter); // Gunakan filter yang sudah diperbarui
       emit(state.copyWith(
         status: HomeDataStatus.success,
         tempGaugeData: data['tempGauge'],

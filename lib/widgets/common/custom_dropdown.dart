@@ -30,24 +30,26 @@ class CustomDropdown extends StatelessWidget {
         color: backgroundColor ?? AppColors.white, // Default to white
         borderRadius: borderRadius ?? BorderRadius.circular(15), // Default radius
       ),
-      child: DropdownButton<String>(        
-        value: value,
-        isExpanded: true, // <-- TAMBAHKAN INI
-        style: const TextStyle(
-          color: AppColors.black,
-          fontSize: 14,
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: value,
+          isExpanded: false, // Set to false to allow the dropdown to size itself
+          alignment: AlignmentDirectional.center, // Center the selected item text
+          style: const TextStyle(
+            color: AppColors.black,
+            fontSize: 14,
+          ),
+          items: items.map((String item) {
+            return DropdownMenuItem<String>(
+              value: item,
+              child: Text(
+                item,
+                overflow: TextOverflow.ellipsis,
+              ),
+            );
+          }).toList(),
+          onChanged: onChanged,
         ),
-        items: items.map((String item) {
-          return DropdownMenuItem<String>(
-            value: item,
-            child: Text( // Hapus Center yang tidak perlu
-              item,
-              overflow: TextOverflow.ellipsis,
-            ),
-          );
-        }).toList(),
-        onChanged: onChanged,
-        underline: Container(), // Menghilangkan garis bawah
       ),
     );
   }

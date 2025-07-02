@@ -16,7 +16,7 @@ class TempGraphSection extends StatelessWidget {
           previous.tempChartData != current.tempChartData ||
           previous.filterSelection != current.filterSelection,
       builder: (context, state) {
-        if (state.tempChartData == null || state.filterSelection == null) {
+        if (state.tempChartData == null) {
           return const SizedBox(height: 400, child: Center(child: CircularProgressIndicator()));
         }
 
@@ -30,7 +30,7 @@ class TempGraphSection extends StatelessWidget {
             children: [
               FunctionalFilterBar(
                 title: 'Temperature Chart',
-                filterSelection: state.filterSelection!,
+                filterSelection: state.filterSelection,
                 areaItems: areaItems,
                 deviceItems: deviceItems,
                 timeCountItems: timeCountItems,

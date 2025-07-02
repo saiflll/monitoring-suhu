@@ -16,7 +16,7 @@ class RHGraphSection extends StatelessWidget {
           previous.humidityChartData != current.humidityChartData ||
           previous.filterSelection != current.filterSelection,
       builder: (context, state) {
-        if (state.humidityChartData == null || state.filterSelection == null) {
+        if (state.humidityChartData == null) {
           return const SizedBox(height: 400, child: Center(child: CircularProgressIndicator()));
         }
 
@@ -30,7 +30,7 @@ class RHGraphSection extends StatelessWidget {
             children: [
               FunctionalFilterBar(
                 title: 'Humidity Chart',
-                filterSelection: state.filterSelection!,
+                filterSelection: state.filterSelection,
                 areaItems: areaItems,
                 deviceItems: deviceItems,
                 timeCountItems: timeCountItems,

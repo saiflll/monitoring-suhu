@@ -19,13 +19,9 @@ class _InteractiveMapWidgetState extends State<InteractiveMapWidget> with Ticker
   final double _mapWidth = 301;
   final double _mapHeight = 177;
   Matrix4? _initialMatrix;
-  static const double dotDiameter = 5.0; // Ukuran titik yang konsisten
-
-  // Controller dan animasi untuk zoom
+  static const double dotDiameter = 2.0; 
   late final AnimationController _zoomAnimationController;
   Animation<Matrix4>? _zoomAnimation;
-
-  // Controller dan animasi untuk efek denyut (pulsate)
   late final AnimationController _pulsateAnimationController;
   late final Animation<double> _pulsateAnimation;
 
@@ -34,7 +30,7 @@ class _InteractiveMapWidgetState extends State<InteractiveMapWidget> with Ticker
     super.initState();
     _zoomAnimationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 250),
     )..addListener(() {
         if (_zoomAnimation != null) {
           _controller.value = _zoomAnimation!.value;
@@ -74,9 +70,9 @@ class _InteractiveMapWidgetState extends State<InteractiveMapWidget> with Ticker
   }
 
   void _zoomToTitik(Titik titik, Size viewportSize) {
-    const double scale = 20.0; // Tingkat zoom
-    final targetX = titik.x * _mapWidth; // Hitung posisi absolut dari relatif
-    final targetY = titik.y * _mapHeight; // Hitung posisi absolut dari relatif
+    const double scale = 20.0; 
+    final targetX = titik.x * _mapWidth; 
+    final targetY = titik.y * _mapHeight; 
 
     final x = -(targetX * scale) + (viewportSize.width / 2);
     final y = -(targetY * scale) + (viewportSize.height / 2);
@@ -89,7 +85,7 @@ class _InteractiveMapWidgetState extends State<InteractiveMapWidget> with Ticker
   }
 
   void _resetZoom() {
-    // Kembali ke tampilan awal yang sudah dihitung, bukan ke skala 1:1.
+    
     if (_initialMatrix != null) {
       _animateTo(_initialMatrix!);
     }
@@ -101,25 +97,18 @@ class _InteractiveMapWidgetState extends State<InteractiveMapWidget> with Ticker
     _zoomAnimationController.forward(from: 0.0);
   }
 
-  /// Menghitung dan mengatur matriks transformasi awal agar denah pas di layar.
   void _setupInitialMatrix(Size viewportSize) {
-    // Hanya atur sekali saja untuk efisiensi.
     if (_initialMatrix != null || viewportSize.isEmpty) return;
 
     final scaleX = viewportSize.width / _mapWidth;
     final scaleY = viewportSize.height / _mapHeight;
-    // Gunakan `min` untuk memastikan seluruh denah terlihat (seperti BoxFit.contain).
     final scale = min(scaleX, scaleY);
-
-    // Hitung offset untuk memusatkan denah di dalam viewport.
     final dx = (viewportSize.width - _mapWidth * scale) / 2;
     final dy = (viewportSize.height - _mapHeight * scale) / 2;
 
     _initialMatrix = Matrix4.identity()
       ..translate(dx, dy)
       ..scale(scale);
-
-    // Terapkan matriks awal ke controller.
     _controller.value = _initialMatrix!;
   }
 
@@ -128,11 +117,9 @@ class _InteractiveMapWidgetState extends State<InteractiveMapWidget> with Ticker
     return LayoutBuilder(
       builder: (context, constraints) {
         final viewportSize = constraints.biggest;
-        // Panggil fungsi setup setiap kali layout berubah (misal: rotasi layar).
         _setupInitialMatrix(viewportSize);
 
         return BlocConsumer<TitikCubit, TitikState>(
-          // Listener untuk memicu animasi zoom
           listener: (context, state) {
             if (state.selected != null) {
               _zoomToTitik(state.selected!, viewportSize);
@@ -168,15 +155,14 @@ class _InteractiveMapWidgetState extends State<InteractiveMapWidget> with Ticker
                         height: _mapHeight,
                         fit: BoxFit.fill,
                       ),
-                      // Efek blur/dim saat sebuah titik dipilih
+                    
                       AnimatedOpacity(
                         opacity: state.selected != null ? 1.0 : 0.0,
-                        duration: const Duration(milliseconds: 300),
+                        duration: const Duration(milliseconds: 250),
                         child: BackdropFilter(
                           filter: ImageFilter.blur(sigmaX: 0.2, sigmaY: 0.2),
                           child: Container(
-                            // Sedikit menggelapkan latar belakang untuk memperkuat efek fokus
-                            color: const Color.fromARGB(116, 209, 208, 208).withOpacity(0.2),
+                            color: const Color.fromARGB(78, 209, 208, 208).withOpacity(0.2),
                           ),
                         ),
                       ),
@@ -184,14 +170,9 @@ class _InteractiveMapWidgetState extends State<InteractiveMapWidget> with Ticker
                       ...titikList.map((titik) {
                         final isSelected = state.selected?.id == titik.id;
                         final isAlert = titik.status == 'warning' || titik.status == 'danger';
-                        
-                        // Ukuran maksimum widget (titik + efek denyut)
-                        final double maxWidgetSize = dotDiameter + 6.0; // 6.0 adalah nilai 'end' dari Tween pulsasi
-
-                        // Sesuaikan posisi kiri/atas untuk memusatkan widget
+                        final double maxWidgetSize = dotDiameter + 6.0; 
                         final left = (titik.x * _mapWidth) - (maxWidgetSize / 2);
                         final top = (titik.y * _mapHeight) - (maxWidgetSize / 2);
-
                         return Positioned(
                           left: left,
                           top: top,
@@ -199,40 +180,39 @@ class _InteractiveMapWidgetState extends State<InteractiveMapWidget> with Ticker
                           height: maxWidgetSize, 
                           child: GestureDetector(
                             onTap: () => context.read<TitikCubit>().pilihTitik(titik),
-                            // Mencegah event tap "tembus" ke GestureDetector di belakangnya
                             behavior: HitTestBehavior.opaque,
                             child: Stack(
                               alignment: Alignment.center,
-                              children: [
-                                // Efek denyut (hanya untuk status warning/danger)
+                                children: [
                                 if (isAlert)
                                   AnimatedBuilder(
-                                    animation: _pulsateAnimation,
-                                    builder: (context, child) {
-                                      return Container(
-                                        width: dotDiameter + _pulsateAnimation.value,
-                                        height: dotDiameter + _pulsateAnimation.value,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: _statusColor(titik.status).withOpacity(0.4),
-                                        ),
-                                      );
-                                    },
+                                  animation: _pulsateAnimation,
+                                  builder: (context, child) {
+                                    return Container(
+                                    width: dotDiameter + _pulsateAnimation.value,
+                                    height: dotDiameter + _pulsateAnimation.value,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: _statusColor(titik.status).withOpacity(0.4),
+                                    ),
+                                    );
+                                  },
                                   ),
-                                // Titik utama
+                                // Titik utama dengan animasi ukuran saat diklik
                                 AnimatedContainer(
                                   duration: const Duration(milliseconds: 400),
-                                  width: dotDiameter,
-                                  height: dotDiameter,
+                                  width: isSelected ? dotDiameter + 6.0 : dotDiameter,
+                                  height: isSelected ? dotDiameter + 6.0 : dotDiameter,
                                   decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: _statusColor(titik.status).withOpacity(0.9),
-                                    border: isSelected
-                                        ? Border.all(color: Colors.blueAccent, width: 0.15) // Border saat dipilih
-                                        : Border.all(color: Colors.white, width: 0.3), // Border tipis agar menonjol
+                                  shape: BoxShape.circle,
+                                  color: _statusColor(titik.status).withOpacity(0.9),
+                                  border: isSelected
+                                    ? Border.all(color: const Color.fromARGB(255, 252, 165, 93), width: 0.35)
+                                    : Border.all(color: const Color.fromARGB(255, 9, 9, 9), width: 0.1),
                                   ),
                                 ),
-                              ],
+                                ],
+                              
                             ),
                           ),
                         );

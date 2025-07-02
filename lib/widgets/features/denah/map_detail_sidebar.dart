@@ -9,61 +9,87 @@ class MapDetailSidebar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container( // Tinggi sekarang diatur oleh parent (_MapSection)
+    return Container( 
       decoration: BoxDecoration(
-        color: AppColors.bgblu,
-        border: Border.all(color: const Color.fromARGB(25, 0, 0, 0)),
-        borderRadius: BorderRadius.circular(4),
+        color: AppColors.white, 
+        border: const Border(
+          left: BorderSide(
+            color: AppColors.bgblu, 
+            width: 8.0,       
+          ),
+        ),
+        borderRadius: BorderRadius.circular(8.0), 
       ),
       padding: const EdgeInsets.all(16.0),
-      child: SingleChildScrollView( // 1. Bungkus dengan SingleChildScrollView
+      child: SingleChildScrollView( 
         child: BlocBuilder<TitikCubit, TitikState>(
           buildWhen: (prev, current) => prev.selected != current.selected,
           builder: (context, state) {
             if (state.selected == null) {
-              // Jika tidak ada titik yang dipilih, tampilkan daftar semua area
               return _buildAllPointsList(context);
             }
-            // Jika ada titik yang dipilih, tampilkan detailnya
             return _buildPointDetailView(context, state.selected!);
           },
         ),
       ),
     );
   }
-
-  /// Widget helper untuk membangun konten internal dari sebuah kartu area.
-  /// Menampilkan nama area, suhu, dan kelembapan.
   Widget _buildAreaCardContent(BuildContext context, Titik titik) {
     return Padding(
-      padding: const EdgeInsets.all(12.0), // Padding di dalam kartu
+      padding: const EdgeInsets.all(12.0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+
+        Container(
+        margin: const EdgeInsets.only(bottom: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+        color: AppColors.white,
+        width: double.infinity,
+        child: Text(
+          titik.deskripsi,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+            fontSize: 12,
+            ),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+        ),
+        Row(
         children: [
-          // Bagian Atas: Nama Area
-          Text(
-            titik.deskripsi,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: Colors.black87, fontSize: 12, ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: 8),
-          //const Divider(),
-          const SizedBox(height: 4),
-          // Bagian Bawah: Suhu & Kelembapan
-          Row(
+          Expanded(
+          child: Container(
+            margin: const EdgeInsets.only(right: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            color: AppColors.white,
+            child: Row(
             children: [
-              // Kolom Kiri: Suhu
-              Expanded(
-                child: _buildInfoColumn(context, 'Suhu', '${titik.suhu}°C'),
-              ),
-              // Kolom Kanan: Kelembapan
-              Expanded(
-                child: _buildInfoColumn(context, 'Kelembapan', titik.rh.isNotEmpty ? '${titik.rh}%' : '-'),
-              ),
+              const Icon(Icons.thermostat, size: 18, color: AppColors.pri),
+              const SizedBox(width: 2),
+              _buildInfoColumn(context, 'Suhu', '${titik.suhu}°C'),
             ],
+            ),
+          ),
+          ),
+          Expanded(
+          child: Container(
+            margin: const EdgeInsets.only(left: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            color: AppColors.white,
+            child: Row(
+            children: [
+              const Icon(Icons.water_drop, size: 18, color: AppColors.blul),
+              const SizedBox(width: 2),
+              _buildInfoColumn(context, 'Kelembapan', titik.rh.isNotEmpty ? '${titik.rh}%' : '-'),
+            ],
+            ),
+          ),
           ),
         ],
+        ),
+      ],
       ),
     );
   }
@@ -78,27 +104,22 @@ class MapDetailSidebar extends StatelessWidget {
       ],
     );
   }
-  /// Widget untuk menampilkan daftar semua titik dalam bentuk Card.
   Widget _buildAllPointsList(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Daftar Area',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-        ),
-        const Divider(),
-        // 2. Hapus Expanded dan gunakan ListView.builder dengan shrinkWrap
+        
+       
         ListView.builder(
-          shrinkWrap: true, // Membuat ListView setinggi kontennya
-          physics: const NeverScrollableScrollPhysics(), // Mencegah konflik scroll
+          shrinkWrap: true, 
+          physics: const NeverScrollableScrollPhysics(), 
           itemCount: titikList.length,
           itemBuilder: (context, index) {
             final titik = titikList[index];
             return Card(
-              color: Colors.white, // Latar belakang kartu menjadi putih
+              color: AppColors.bgblu, 
               margin: const EdgeInsets.symmetric(vertical: 4.0),
-              clipBehavior: Clip.antiAlias, // Agar efek ripple mengikuti bentuk kartu
+              clipBehavior: Clip.antiAlias, 
               child: InkWell(
                 onTap: () => context.read<TitikCubit>().pilihTitik(titik),
                 child: Row(
@@ -120,7 +141,7 @@ class MapDetailSidebar extends StatelessWidget {
   Widget _buildPointDetailView(BuildContext context, Titik titik) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min, // Mencegah Column mengambil tinggi tak terbatas
+      mainAxisSize: MainAxisSize.min,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -138,9 +159,8 @@ class MapDetailSidebar extends StatelessWidget {
         ),
         const Divider(),
         const SizedBox(height: 8),
-        // Tampilkan detail dalam bentuk Card yang sama seperti di daftar
         Card(
-          color: Colors.white, // Latar belakang kartu menjadi putih
+          color: Colors.white, 
           margin: const EdgeInsets.symmetric(vertical: 4.0),
           child: _buildAreaCardContent(context, titik),
         ),

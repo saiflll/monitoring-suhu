@@ -32,21 +32,52 @@ class MapDetailSidebar extends StatelessWidget {
     );
   }
 
-  /// Widget helper untuk membuat subtitle yang berisi status Suhu dan RH.
-  Widget _buildStatusSubtitle(BuildContext context, Titik titik) {
-    List<String> statuses = [];
-    // Tambahkan status suhu
-    statuses.add('Suhu: ${titik.suhu}°C');
-
-    // Tambahkan status RH hanya jika ada nilainya
-    if (titik.rh.isNotEmpty) {
-      statuses.add('RH: ${titik.rh}%');
-    }
-
-    // Gabungkan status dengan pemisah '|'
-    return Text(statuses.join(' | '));
+  /// Widget helper untuk membangun konten internal dari sebuah kartu area.
+  /// Menampilkan nama area, suhu, dan kelembapan.
+  Widget _buildAreaCardContent(BuildContext context, Titik titik) {
+    return Padding(
+      padding: const EdgeInsets.all(12.0), // Padding di dalam kartu
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Bagian Atas: Nama Area
+          Text(
+            titik.deskripsi,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: Colors.black87, fontSize: 12, ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 8),
+          //const Divider(),
+          const SizedBox(height: 4),
+          // Bagian Bawah: Suhu & Kelembapan
+          Row(
+            children: [
+              // Kolom Kiri: Suhu
+              Expanded(
+                child: _buildInfoColumn(context, 'Suhu', '${titik.suhu}°C'),
+              ),
+              // Kolom Kanan: Kelembapan
+              Expanded(
+                child: _buildInfoColumn(context, 'Kelembapan', titik.rh.isNotEmpty ? '${titik.rh}%' : '-'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
+  Widget _buildInfoColumn(BuildContext context, String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey[600])),
+        const SizedBox(height: 2),
+        Text(value, style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold, color: Colors.black)),
+      ],
+    );
+  }
   /// Widget untuk menampilkan daftar semua titik dalam bentuk Card.
   Widget _buildAllPointsList(BuildContext context) {
     return Column(
@@ -65,15 +96,19 @@ class MapDetailSidebar extends StatelessWidget {
           itemBuilder: (context, index) {
             final titik = titikList[index];
             return Card(
+              color: Colors.white, // Latar belakang kartu menjadi putih
               margin: const EdgeInsets.symmetric(vertical: 4.0),
-              child: ListTile(
-                title: Text(titik.deskripsi),
-                subtitle: _buildStatusSubtitle(context, titik),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () {
-                  // Saat card di-klik, panggil cubit untuk memilih titik ini
-                  context.read<TitikCubit>().pilihTitik(titik);
-                },
+              clipBehavior: Clip.antiAlias, // Agar efek ripple mengikuti bentuk kartu
+              child: InkWell(
+                onTap: () => context.read<TitikCubit>().pilihTitik(titik),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: _buildAreaCardContent(context, titik),
+                    ),
+                    
+                  ],
+                ),
               ),
             );
           },
@@ -105,13 +140,10 @@ class MapDetailSidebar extends StatelessWidget {
         const SizedBox(height: 8),
         // Tampilkan detail dalam bentuk Card yang sama seperti di daftar
         Card(
+          color: Colors.white, // Latar belakang kartu menjadi putih
           margin: const EdgeInsets.symmetric(vertical: 4.0),
-          child: ListTile(
-            title: Text(titik.deskripsi, style: const TextStyle(fontWeight: FontWeight.bold)),
-            subtitle: _buildStatusSubtitle(context, titik),
-          ),
+          child: _buildAreaCardContent(context, titik),
         ),
-        
       ],
     );
   }
